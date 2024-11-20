@@ -51,7 +51,7 @@ int main()
 
                 break;
             }
-            else if (/*if all place occupied*/)
+            else if (1) /*if all place occupied*/
             {
                 printf("Ohh! The Game ended in Draw! \nNobody wins");
 
