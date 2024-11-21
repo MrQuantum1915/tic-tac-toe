@@ -6,7 +6,7 @@ int main()
 
     while (choose != 'n')
     {
-        printf("\nEnter '100' terminate the game before the next time a player is asked to enter the block location\n");
+        printf("Instructions:-\n\nEnter '100' to terminate the game before the next time a player is asked to enter the block location\nEnter the coordinates of the block in which you wanna input (space seperated integers) when asked Coordinates\n");
         char name1[20], name2[20];
         printf("Player 1 name : ");
         scanf("%s", name1);
@@ -27,15 +27,18 @@ int main()
             {
                 printf("It's %s's turn to make a move!", name1);
                 whoseTurn = 1;
-                printf("Enter the coordinates of the block in which you wanna input (space seperated integers) : ");
+                printf("Coordinates : ");
                 scanf("%d %d", &x, &y); // add error handling when x and y are beyond constraints and if the block is preoccupied
                 matrix[x][y] = '1';
             }
 
             else
             {
-                printf("It's %s's turn ot make the move", name2);
+                printf("It's %s's turn to make the move", name2);
                 whoseTurn = 2;
+printf("Coordinates :");
+scanf("%d %d", &x, &y);
+matrix[x][y] = '0';
             }
 
             if ((matrix[0][0] == matrix[1][1] == matrix[2][2]) || (matrix[0][2] == matrix[1][1] == matrix[2][0]) || (matrix[0][0] == matrix[1][0] == matrix[2][0]) || (matrix[0][1] == matrix[1][1] == matrix[2][1]) || (matrix[0][2] == matrix[1][2] == matrix[2][2]) || (matrix[0][0] == matrix[0][1] == matrix[0][2]) || (matrix[1][0] == matrix[1][1] == matrix[1][2]) || (matrix[2][0] == matrix[2][1] == matrix[2][2]))
