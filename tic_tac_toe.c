@@ -1,73 +1,132 @@
 #include <stdio.h>
+//Made by Mr.Quantum (Darshan Patel)
+
+int check(char matrix[3][3]);
+void printCanvas(char matrix[3][3]);
 
 int main()
 {
     char choose = 'y';
 
-    while (choose != 'n')
+    while (choose == 'y' || choose == 'Y')
     {
-        printf("Instructions:-\n\nEnter '100' to terminate the game before the next time a player is asked to enter the block location\nEnter the coordinates of the block in which you wanna input (space seperated integers) when asked Coordinates\n");
+        printf("Instructions:-\n\t1) Enter '100' to terminate the game before the next time a player is asked to enter the block location\n\t2) Enter the coordinates of the block in which you wanna input (space seperated integers) when asked Coordinates\n\t3) The coordinates index starts from 1,1 to 3,3 \n");
         char name1[20], name2[20];
         printf("Player 1 name : ");
         scanf("%s", name1);
 
-        printf("\nPlayer 1 name : ");
+        printf("Player 2 name : ");
         scanf("%s", name2);
 
-        printf("%s is assinged 1 for inputing\n%s is assigned 0 for inputing", name1,name2);
+        printf("\n%s is assinged 'X'\n%s is assigned 'O'\n", name1, name2);
 
         int win = 0;
-        char matrix[3][3];
+        char matrix[3][3] = {
+            {'1', '2', '3'},
+            {'4', '5', '6'},
+            {'7', '8', '9'}}; //So that initially the every block is different valued because here I check equal character in the blocks to decide winner.
         int terminate;
         int whoseTurn = 2;
+        int count = 0; // for counting to check whether all the blocks are occupied or not. And then check if its draw.
         while (terminate != 100)
         {
             int x, y;
             if (whoseTurn == 2)
             {
-                printf("It's %s's turn to make a move!", name1);
+                printf("It's %s's turn to make a move!\n", name1);
                 whoseTurn = 1;
-                printf("Coordinates : ");
+                printf("\nCoordinates : ");
                 scanf("%d %d", &x, &y); // add error handling when x and y are beyond constraints and if the block is preoccupied
-                matrix[x][y] = '1';
+                matrix[x-1][y-1] = 'X';
+                count++;
+                printCanvas(matrix);
             }
 
             else
             {
                 printf("It's %s's turn to make the move", name2);
                 whoseTurn = 2;
-printf("Coordinates :");
-scanf("%d %d", &x, &y);
-matrix[x][y] = '0';
+                printf("\nCoordinates : ");
+                scanf("%d %d", &x, &y);
+                matrix[x-1][y-1] = 'O';
+                count++;
+                printCanvas(matrix);
             }
 
-            if ((matrix[0][0] == matrix[1][1] == matrix[2][2]) || (matrix[0][2] == matrix[1][1] == matrix[2][0]) || (matrix[0][0] == matrix[1][0] == matrix[2][0]) || (matrix[0][1] == matrix[1][1] == matrix[2][1]) || (matrix[0][2] == matrix[1][2] == matrix[2][2]) || (matrix[0][0] == matrix[0][1] == matrix[0][2]) || (matrix[1][0] == matrix[1][1] == matrix[1][2]) || (matrix[2][0] == matrix[2][1] == matrix[2][2]))
+            int checkWin = check(matrix);
+            if (checkWin == 1)
             {
                 if (whoseTurn == 1)
                 {
-                    printf("Hurray! %s wins", name1);
+                    printf("\nHurray! %s wins!", name1);
                 }
                 else if (whoseTurn == 2)
                 {
-                    printf("Hurray! %s wins", name2);
+                    printf("\nHurray! %s wins!", name2);
                 }
-
                 break;
             }
-            else if (1) /*if all place occupied*/
+            else if (count == 9) /*if all place occupied*/
             {
                 printf("Ohh! The Game ended in Draw! \nNobody wins");
-
                 break;
             }
         }
 
-        printf("Wanna Replay the game? (y/n) : ");
+        printf("\n\nWanna Replay the game? (y/n)[case insensitive] : ");
+
+        getchar(); // somehow some buffer newline character is being taken by scanf below, hence used this to clear any buffer
+
         scanf("%c", &choose);
-        if (choose = 'n')
+        if (choose == 'n')
         {
-            printf("Okay! See you again on some another beautiful day!\n\nHave a nice Day!\n\n");
+            printf("\nOkay! See you again on some another beautiful day!\n\nHave a nice Day ahead!\n\n");
         }
     }
     return 0;
+}
+
+int check(char matrix[3][3])
+{
+    int result = 0;
+
+    for (int i = 0; i < 3; i++)
+    {
+        if (((matrix[i][0] == matrix[i][1]) && (matrix[i][1] == matrix[i][2])) || ((matrix[0][i] == matrix[1][i]) && (matrix[1][i] == matrix[2][i])))
+        {
+            result = 1;
+            return result;
+        }
+    }
+
+    if ((matrix[0][0] == matrix[1][1]) && (matrix[1][1] == matrix[2][2]) || ((matrix[0][2] == matrix[1][1]) && matrix[1][1] == matrix[2][0]))
+    {
+        result = 1;
+        return result;
+    }
+
+    return 0;
+}
+
+void printCanvas(char matrix[3][3])
+{
+    for (int i = 0; i < 3; i++)
+    {
+        printf("\t\t\t");
+
+        for (int j = 0; j < 3; j++)
+        {
+            if (matrix[i][j] != 'X' && matrix[i][j] != 'O')
+            {
+                printf(".   ");
+            }
+
+            else
+            {
+                printf("%c   ", matrix[i][j]);
+            }
+        }
+        printf("\n\n");
+    }
+    printf("\n");
 }
