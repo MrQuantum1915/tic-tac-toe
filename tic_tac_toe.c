@@ -1,8 +1,14 @@
 #include <stdio.h>
-//Made by Mr.Quantum (Darshan Patel)
+// Made by Mr.Quantum (Darshan Patel)
 
+// struct players{
+//     char name[20];
+
+// }; // can upgrade to display score of the player by histiry file in one by one game
 int check(char matrix[3][3]);
 void printCanvas(char matrix[3][3]);
+void updateHistory(char name1[20], char name2[20], int whoseTurn);
+// void dataToWrite(char name1[20], char name2[20], int whoseTurn);
 
 int main()
 {
@@ -10,11 +16,11 @@ int main()
 
     while (choose == 'y' || choose == 'Y')
     {
-        printf("Instructions:-\n\t1) Enter '100' to terminate the game before the next time a player is asked to enter the block location\n\t2) Enter the coordinates of the block in which you wanna input (space seperated integers) when asked Coordinates\n\t3) The coordinates index starts from 1,1 to 3,3 \n");
+        printf("Instructions:-\n\t1) Enter '-1 -1' to terminate the game before the next time a player is asked to enter the block location\n\t2) Enter the coordinates of the block in which you wanna input (space seperated integers) when asked Coordinates\n\t3) The coordinates index starts from 1,1 to 3,3 \n4) Press H");
         char name1[20], name2[20];
         printf("Player 1 name : ");
         scanf("%s", name1);
-
+        // fgets(char name[20],20);
         printf("Player 2 name : ");
         scanf("%s", name2);
 
@@ -24,20 +30,45 @@ int main()
         char matrix[3][3] = {
             {'1', '2', '3'},
             {'4', '5', '6'},
-            {'7', '8', '9'}}; //So that initially the every block is different valued because here I check equal character in the blocks to decide winner.
+            {'7', '8', '9'}}; // So that initially the every block is different valued because here I check equal character in the blocks to decide winner.
         int terminate;
         int whoseTurn = 2;
+
         int count = 0; // for counting to check whether all the blocks are occupied or not. And then check if its draw.
-        while (terminate != 100)
+
+        while (1)
         {
             int x, y;
             if (whoseTurn == 2)
             {
                 printf("It's %s's turn to make a move!\n", name1);
                 whoseTurn = 1;
-                printf("\nCoordinates : ");
-                scanf("%d %d", &x, &y); // add error handling when x and y are beyond constraints and if the block is preoccupied
-                matrix[x-1][y-1] = 'X';
+                int error = 0;
+                while (error != 1) // error handling
+                {
+                    printf("\nCoordinates : ");
+                    scanf("%d %d", &x, &y);
+
+                    if (x == -1)
+                    {
+                        return -1; // terminate the game
+                    }
+
+                    if (((x > 3) || (x < 1)) || ((y > 3) || (y < 1)))
+                    {
+                        printf("Please Enter valid coordinates!");
+                    }
+                    else if (matrix[x - 1][y - 1] == 'X' || matrix[x - 1][y - 1] == 'O')
+                    {
+                        printf("The block is already occupied. Please enter valid coordinates!");
+                    }
+                    else
+                    {
+                        error = 1;
+                    }
+                }
+
+                matrix[x - 1][y - 1] = 'X';
                 count++;
                 printCanvas(matrix);
             }
@@ -46,9 +77,31 @@ int main()
             {
                 printf("It's %s's turn to make the move", name2);
                 whoseTurn = 2;
-                printf("\nCoordinates : ");
-                scanf("%d %d", &x, &y);
-                matrix[x-1][y-1] = 'O';
+                int error = 0;
+                while (error != 1) // error handling
+                {
+                    printf("\nCoordinates : ");
+                    scanf("%d %d", &x, &y);
+                    if (x == -1)
+                    {
+                        return -1;
+                    }
+
+                    if (((x > 3) || (x < 1)) || ((y > 3) || (y < 1)))
+                    {
+                        printf("Please Enter valid coordinates!");
+                    }
+                    else if (matrix[x - 1][y - 1] == 'X' || matrix[x - 1][y - 1] == 'O')
+                    {
+                        printf("The block is already occupied. Please enter valid coordinates!");
+                    }
+                    else
+                    {
+                        error = 1;
+                    }
+                }
+
+                matrix[x - 1][y - 1] = 'O';
                 count++;
                 printCanvas(matrix);
             }
@@ -72,6 +125,8 @@ int main()
                 break;
             }
         }
+        // dataToWrite(name1, name2, whoseTurn);
+        updateHistory(name1, name2, whoseTurn);
 
         printf("\n\nWanna Replay the game? (y/n)[case insensitive] : ");
 
@@ -130,3 +185,33 @@ void printCanvas(char matrix[3][3])
     }
     printf("\n");
 }
+
+void updateHistory(char name1[20], char name2[20], int whoseTurn)
+{
+    char *winner; //pointer to store adress of winner so That I can print it in history file below
+    if (whoseTurn == 1)
+    {
+        winner = name1;
+    }
+    else
+    {
+        winner = name2;
+    }
+
+    FILE *fptr;
+
+    fptr = fopen("history.c", "a");
+    if (fptr == NULL)
+    {
+        printf("Error opening game history file...\nHistory will not be saved");
+    }
+    int entry_Number = fscanf(fptr, "%d", &entry_Number);
+    fseek(fptr, -14, SEEK_END);
+    fprintf(fptr, "\n\ngame[%d] = (struct entry){\n      {\"%s\", \"%s\"},\n      \"%s\",\n  };",entry_Number++, name1, name2, winner);
+    fclose(fptr);
+}
+
+// void dataToWrite(char name1[20], char name2[20], int whoseTurn)
+// {
+
+// }
