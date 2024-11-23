@@ -4,11 +4,11 @@
 // struct players{
 //     char name[20];
 
-// }; // can upgrade to display score of the player by histiry file in one by one game
+// }; // can upgrade to display score of the player by history file in one by one game
 int check(char matrix[3][3]);
 void printCanvas(char matrix[3][3]);
 void updateHistory(char name1[20], char name2[20], int whoseTurn);
-// void dataToWrite(char name1[20], char name2[20], int whoseTurn);
+int findLastGameNumber();
 
 int main()
 {
@@ -16,13 +16,14 @@ int main()
 
     while (choose == 'y' || choose == 'Y')
     {
-        printf("Instructions:-\n\t1) Enter '-1 -1' to terminate the game before the next time a player is asked to enter the block location\n\t2) Enter the coordinates of the block in which you wanna input (space seperated integers) when asked Coordinates\n\t3) The coordinates index starts from 1,1 to 3,3 \n4) Press H");
+        printf("Instructions:-\n\t1) Enter '-1 -1' to terminate the game before the next time a player is asked to enter the block location\n\t2) Enter the coordinates of the block in which you wanna input (space seperated integers) when asked Coordinates\n\t3) The coordinates index starts from 1,1 to 3,3 \n4) Press H to see game History\n");
+
         char name1[20], name2[20];
         printf("Player 1 name : ");
-        scanf("%s", name1);
-        // fgets(char name[20],20);
+        fgets(name1, sizeof(name1), stdin); // to store the full names along with space in between
+
         printf("Player 2 name : ");
-        scanf("%s", name2);
+        fgets(name2, sizeof(name2), stdin);
 
         printf("\n%s is assinged 'X'\n%s is assigned 'O'\n", name1, name2);
 
@@ -125,7 +126,7 @@ int main()
                 break;
             }
         }
-        // dataToWrite(name1, name2, whoseTurn);
+
         updateHistory(name1, name2, whoseTurn);
 
         printf("\n\nWanna Replay the game? (y/n)[case insensitive] : ");
@@ -188,7 +189,7 @@ void printCanvas(char matrix[3][3])
 
 void updateHistory(char name1[20], char name2[20], int whoseTurn)
 {
-    char *winner; //pointer to store adress of winner so That I can print it in history file below
+    char *winner; // pointer to store adress of winner so That I can print it in history file below
     if (whoseTurn == 1)
     {
         winner = name1;
@@ -198,20 +199,78 @@ void updateHistory(char name1[20], char name2[20], int whoseTurn)
         winner = name2;
     }
 
-    FILE *fptr;
+    FILE *fptr1;
 
-    fptr = fopen("history.c", "a");
-    if (fptr == NULL)
+    fptr1 = fopen("history.txt", "a"); // opens in both read and write mode
+    if (fptr1 == NULL)
     {
-        printf("Error opening game history file...\nHistory will not be saved");
+        printf("Error opening game history file...\nHistory is not saved.\nProcess Terminated");
+        return;
     }
-    int entry_Number = fscanf(fptr, "%d", &entry_Number);
-    fseek(fptr, -14, SEEK_END);
-    fprintf(fptr, "\n\ngame[%d] = (struct entry){\n      {\"%s\", \"%s\"},\n      \"%s\",\n  };",entry_Number++, name1, name2, winner);
-    fclose(fptr);
+
+    int gameNumber = findLastGameNumber();
+
+    fprintf(fptr1, "\n{\n"
+                   "\tGame number : %d\n"
+                   "\tPlayer 1 : %s"
+                   "\tPlayer 2 : %s"
+                   "\tWho Won : %s"
+                   "}\n",
+            (gameNumber+1), name1, name2, winner);
+    fclose(fptr1);
 }
 
-// void dataToWrite(char name1[20], char name2[20], int whoseTurn)
-// {
+int findLastGameNumber()
+{
+    FILE *fptr2;
+    fptr2 = fopen("history.txt", "r");
+    fseek(fptr2, 0, SEEK_END);
 
-// }
+    int position = 0;
+    char ch;
+    int count=0;
+    while (1) // Note that atleast one previous Entry in whole file must be there for this to work. Because This is the simplest logic I come up with. Hence I have written 0th entry by default
+    {
+        // printf("counting\n");
+        fseek(fptr2, -1, SEEK_CUR);
+        ch = fgetc(fptr2);
+
+        if (ch == '\n')
+        {
+            count++;
+        }
+
+        if (count == 5)
+        {
+            break;
+        }
+
+        fseek(fptr2, -1, SEEK_CUR); // I had to do this again because reading the cahracter by fgetc moves the pointer forward again by one position
+    }
+
+    int gameNumber = 0;
+    char TempCharNum;
+    for (int i = 0; i < 3; i++) //Setting maximum file history to 3 digit number as it already is beyond what anyone would actually play XD
+    {
+
+        fseek(fptr2, -1, SEEK_CUR);
+
+        if (fgetc(fptr2) == ' ')
+        {
+            break;
+        }
+
+        TempCharNum = fgetc(fptr2);
+        if (i == 0)
+        {
+            gameNumber += (TempCharNum - '0');
+        }
+        else
+        {
+            gameNumber += (10 * (i) * (TempCharNum - '0')); // Here I am converting character to integer
+            fseek(fptr2, -1, SEEK_CUR);
+        }
+    }
+
+    return gameNumber;
+}

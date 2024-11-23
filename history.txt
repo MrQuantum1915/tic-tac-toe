@@ -1,0 +1,31 @@
+Quantum (Darshan Patel)
+// What feature I wanna add : - One block contains names, time,Who win,etc
+
+{
+	Game number : 0
+	Player 1 : Darshan Patel
+	Player 2 : Mr Quantum
+	Who Won : Darshan Patel
+}
+
+{
+	Game number : -1518
+	Player 1 : Darshan Patel
+	Player 2 : Mr Quantum
+	Who Won : Darshan Patel
+}
+
+{
+	Game number : -1518
+	Player 1 : Darshan Patel
+	Player 2 : Mr Quantum
+	Who Won : Darshan Patel
+}
+
+
+{
+	Game number : -1518
+	Player 1 : Darshan Patel
+	Player 2 : Mr Quantum
+	Who Won : Darshan Patel
+}
