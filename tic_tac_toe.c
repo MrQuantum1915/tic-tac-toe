@@ -139,6 +139,9 @@ int main()
             printf("\nOkay! See you again on some another beautiful day!\n\nHave a nice Day ahead!\n\n");
         }
     }
+
+    printf("Press any key to exit...");
+    getchar(); // If the user runs this in windows terminal instead, than user has a time to see the result
     return 0;
 }
 
